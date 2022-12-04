@@ -1,0 +1,26 @@
+[
+  {
+    "id": 10000,
+    "name": "皮卡丘",
+    "desc": "初始发型",
+    "price": 100,
+    "move_speed": 10.587,
+    "batch_useable": false,
+    "exchange_list": [
+      100012,
+      100023
+    ]
+  },
+  {
+    "id": 10001,
+    "name": "小火龍",
+    "desc": "初始外套",
+    "price": 100,
+    "move_speed": 10.55789,
+    "batch_useable": false,
+    "exchange_list": [
+      100012,
+      100024
+    ]
+  }
+]
