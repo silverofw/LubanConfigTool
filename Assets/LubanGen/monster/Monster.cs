@@ -7,28 +7,44 @@
 //------------------------------------------------------------------------------
 using Bright.Serialization;
 using System.Collections.Generic;
+using SimpleJSON;
+
 
 
 namespace cfg.monster
-{
+{ 
+
 public sealed partial class Monster :  Bright.Config.BeanBase 
 {
-    public Monster(ByteBuf _buf) 
+    public Monster(JSONNode _json) 
     {
-        Id = _buf.ReadInt();
-        Name = _buf.ReadString();
-        Desc = _buf.ReadString();
-        Price = _buf.ReadInt();
-        MoveSpeed = _buf.ReadFloat();
-        if(_buf.ReadBool()){ ExpireTime = _buf.ReadInt(); } else { ExpireTime = null; }
-        BatchUseable = _buf.ReadBool();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);ExchangeList = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); ExchangeList.Add(_e0);}}
+        { if(!_json["id"].IsNumber) { throw new SerializationException(); }  Id = _json["id"]; }
+        { if(!_json["name"].IsString) { throw new SerializationException(); }  Name = _json["name"]; }
+        { if(!_json["desc"].IsString) { throw new SerializationException(); }  Desc = _json["desc"]; }
+        { if(!_json["price"].IsNumber) { throw new SerializationException(); }  Price = _json["price"]; }
+        { if(!_json["move_speed"].IsNumber) { throw new SerializationException(); }  MoveSpeed = _json["move_speed"]; }
+        { var _j = _json["expire_time"]; if (_j.Tag != JSONNodeType.None && _j.Tag != JSONNodeType.NullValue) { { if(!_j.IsNumber) { throw new SerializationException(); }  ExpireTime = _j; } } else { ExpireTime = null; } }
+        { if(!_json["batch_useable"].IsBoolean) { throw new SerializationException(); }  BatchUseable = _json["batch_useable"]; }
+        { var __json0 = _json["exchange_list"]; if(!__json0.IsArray) { throw new SerializationException(); } ExchangeList = new System.Collections.Generic.List<int>(__json0.Count); foreach(JSONNode __e0 in __json0.Children) { int __v0;  { if(!__e0.IsNumber) { throw new SerializationException(); }  __v0 = __e0; }  ExchangeList.Add(__v0); }   }
         PostInit();
     }
 
-    public static Monster DeserializeMonster(ByteBuf _buf)
+    public Monster(int id, string name, string desc, int price, float move_speed, int? expire_time, bool batch_useable, System.Collections.Generic.List<int> exchange_list ) 
     {
-        return new monster.Monster(_buf);
+        this.Id = id;
+        this.Name = name;
+        this.Desc = desc;
+        this.Price = price;
+        this.MoveSpeed = move_speed;
+        this.ExpireTime = expire_time;
+        this.BatchUseable = batch_useable;
+        this.ExchangeList = exchange_list;
+        PostInit();
+    }
+
+    public static Monster DeserializeMonster(JSONNode _json)
+    {
+        return new monster.Monster(_json);
     }
 
     /// <summary>
@@ -90,5 +106,4 @@ public sealed partial class Monster :  Bright.Config.BeanBase
     partial void PostInit();
     partial void PostResolve();
 }
-
 }

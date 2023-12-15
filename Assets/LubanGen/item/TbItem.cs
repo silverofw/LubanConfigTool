@@ -7,37 +7,38 @@
 //------------------------------------------------------------------------------
 using Bright.Serialization;
 using System.Collections.Generic;
+using SimpleJSON;
 
 
-namespace cfg.monster
+
+namespace cfg.item
+{ 
+
+public sealed partial class TbItem
 {
-   
-public partial class TbMonster
-{
-    private readonly Dictionary<int, monster.Monster> _dataMap;
-    private readonly List<monster.Monster> _dataList;
+    private readonly Dictionary<int, item.Item> _dataMap;
+    private readonly List<item.Item> _dataList;
     
-    public TbMonster(ByteBuf _buf)
+    public TbItem(JSONNode _json)
     {
-        _dataMap = new Dictionary<int, monster.Monster>();
-        _dataList = new List<monster.Monster>();
+        _dataMap = new Dictionary<int, item.Item>();
+        _dataList = new List<item.Item>();
         
-        for(int n = _buf.ReadSize() ; n > 0 ; --n)
+        foreach(JSONNode _row in _json.Children)
         {
-            monster.Monster _v;
-            _v = monster.Monster.DeserializeMonster(_buf);
+            var _v = item.Item.DeserializeItem(_row);
             _dataList.Add(_v);
             _dataMap.Add(_v.Id, _v);
         }
         PostInit();
     }
 
-    public Dictionary<int, monster.Monster> DataMap => _dataMap;
-    public List<monster.Monster> DataList => _dataList;
+    public Dictionary<int, item.Item> DataMap => _dataMap;
+    public List<item.Item> DataList => _dataList;
 
-    public monster.Monster GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
-    public monster.Monster Get(int key) => _dataMap[key];
-    public monster.Monster this[int key] => _dataMap[key];
+    public item.Item GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public item.Item Get(int key) => _dataMap[key];
+    public item.Item this[int key] => _dataMap[key];
 
     public void Resolve(Dictionary<string, object> _tables)
     {
@@ -55,6 +56,7 @@ public partial class TbMonster
             v.TranslateText(translator);
         }
     }
+    
     
     partial void PostInit();
     partial void PostResolve();
